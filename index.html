@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>商品订单综合管理系统 v10.2.250910.02</title>
+    <title>商品订单综合管理系统 v10.6.250912.05</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
@@ -380,7 +380,7 @@
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 1050;
             left: 0;
             top: 0;
             width: 100%;
@@ -533,7 +533,7 @@
         .history-modal {
             display: none;
             position: fixed;
-            z-index: 1100;
+            z-index: 1150;
             left: 0;
             top: 0;
             width: 100%;
@@ -571,7 +571,7 @@
         .clear-data-modal {
             display: none;
             position: fixed;
-            z-index: 1200;
+            z-index: 1250;
             left: 0;
             top: 0;
             width: 100%;
@@ -631,7 +631,7 @@
         .profit-calculator-modal {
             display: none;
             position: fixed;
-            z-index: 1300;
+            z-index: 1350;
             left: 0;
             top: 0;
             width: 100%;
@@ -944,7 +944,7 @@
         .export-order-modal {
             display: none;
             position: fixed;
-            z-index: 1400;
+            z-index: 1450;
             left: 0;
             top: 0;
             width: 100%;
@@ -980,10 +980,8 @@
             min-width: 100px;
             text-align: center;
         }
-        .export-format-btn.selected {
-            background-color: #007AFF;
-            color: white;
-            border-color: #007AFF;
+        .export-format-btn:active {
+            background-color: #e0e0e0;
         }
         .copy-success-message {
             color: #34C759;
@@ -1121,7 +1119,7 @@
         .order-modal {
             display: none;
             position: fixed;
-            z-index: 1500;
+            z-index: 1550;
             left: 0;
             top: 0;
             width: 100%;
@@ -1211,7 +1209,7 @@
         .order-filter-modal {
             display: none;
             position: fixed;
-            z-index: 1600;
+            z-index: 1650;
             left: 0;
             top: 0;
             width: 100%;
@@ -1293,15 +1291,67 @@
             color: #007AFF;
             font-weight: 500;
         }
+        /* 轻提示样式 (Toast Notification) */
+        .toast-notification {
+            position: fixed;
+            bottom: 70px; /* 在导航栏上方 */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0,0,0,0.75);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            z-index: 9999;
+            font-size: 14px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+            pointer-events: none; /* 防止遮挡 */
+        }
+        .toast-notification.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        /** NEW STYLE: For Column Toggling **/
+        .col-hidden {
+            display: none;
+        }
+        .column-toggle-controls {
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            text-align: center;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-toggle-col {
+            font-size: 11px;
+            padding: 4px 10px;
+            border: 1px solid #ddd;
+            border-radius: 15px;
+            background-color: #f5f5f5;
+            color: #555;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .btn-toggle-col.active {
+            background-color: #007AFF;
+            color: white;
+            border-color: #007AFF;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
     <div class="container" style="display: none;">
         <div class="header">
-            <h1>商品订单综合管理系统 v10.2.250910.02</h1>
+            <h1>商品订单综合管理系统 v10.6.250912.05</h1>
             <button class="btn-primary" onclick="openAddModal()">录入商品</button>
             <button class="btn-secondary" onclick="openBatchImportExport()">批量操作</button>
-            <button class="btn-secondary" onclick="openProfitCalculator()">利润计算器</button>
+            <button class="btn-secondary" onclick="openProfitCalculator()">订单结算(多商品)</button>
         </div>
         <div class="search-box">
             <input type="text" id="searchInput" placeholder="搜索商品名称、SKU或备注..." onkeyup="debounceSearch()">
@@ -1342,17 +1392,18 @@
             <button class="clear-data-btn-footer" onclick="openClearDataModal()">清理所有数据</button>
         </div>
 		<div style="text-align: center; font-size: 12px; color: #999; margin-top: 10px; padding-bottom: 20px;">
-		    kevin鲁大师 版权所有 盗用必究 版本号：v10.2.250910.02
+		    kevin鲁大师 版权所有 盗用必究 版本号：v10.6.250912.05
 		</div>
     </div>
 
     <div id="orderContent" class="order-content">
         <div class="container">
             <div class="header">
-                <button class="btn-primary" onclick="openAddOrderModal()">录入订单</button>
+                <button class="btn-primary" onclick="openAddOrderModal()">录入订单 (单商品)</button>
                 <button class="btn-secondary" onclick="openOrderFilterModal()">筛选订单</button>
                 <button class="btn-secondary" onclick="exportOrders()">导出订单</button>
                 <button class="btn-secondary" onclick="openBatchOrderImport()">批量导入订单</button>
+                <button class="btn-secondary" onclick="openProfitCalculator()">订单结算(多商品)</button>
             </div>
             <div class="order-summary" id="orderSummary">
                 <div class="summary-toggle" onclick="toggleOrderSummary()">订单汇总 ▼</div>
@@ -1360,17 +1411,21 @@
                     </div>
             </div>
             <div class="order-search-box">
-                <input type="text" id="orderSearchInput" placeholder="搜索订单号、商品名称或SKU..." onkeyup="debounceOrderSearch()">
+                <input type="text" id="orderSearchInput" placeholder="搜索订单号、商品、收件信息、快递单号、备注等..." onkeyup="debounceOrderSearch()">
             </div>
+            
+            <div class="column-toggle-controls" id="columnToggleControls">
+            </div>
+
             <div class="table-container">
                 <div class="table-wrapper">
                     <table class="order-table" id="orderTable">
                         <thead>
                             <tr>
-                                <th>平台</th>
-                                <th>店铺</th>
+                                <th class="col-platform">平台</th>
+                                <th class="col-shop">店铺</th>
                                 <th>订单号</th>
-                                <th>日期</th>
+                                <th onclick="sortOrders('orderDate')" style="cursor: pointer;">日期<span id="orderDateSortIndicator"></span></th>
                                 <th>商品</th>
                                 <th>图片</th>
                                 <th>售价</th>
@@ -1378,6 +1433,7 @@
                                 <th>利润</th>
                                 <th>快递</th>
                                 <th>收件信息</th>
+                                <th class="col-remarks">备注</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
@@ -1515,7 +1571,8 @@
     <div id="profitCalculatorModal" class="profit-calculator-modal">
         <div class="profit-calculator-content">
             <span class="close" onclick="closeProfitCalculator()">&times;</span>
-            <h2 style="margin-bottom: 15px; font-size: 16px; text-align: center;">订单结算</h2>
+            <h2 id="profitCalculatorTitle" style="margin-bottom: 15px; font-size: 16px; text-align: center;">订单结算</h2>
+            <input type="hidden" id="calculatorEditOrderNumber">
             <div class="form-group">
                 <label for="productSelectInput">选择商品</label>
                 <div class="autocomplete-container">
@@ -1583,8 +1640,10 @@
                         <span class="result-label">利润:</span>
                         <span id="pc_profitAmount" class="profit-positive"></span>
                     </div>
-                    <div style="text-align: center; margin-top: 15px;">
-                        <button class="btn-secondary" onclick="openExportOrderModal()" style="width: 80%;">导出订单</button>
+                    <div style="text-align: center; margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn-secondary" onclick="openExportOrderModal()" style="flex: 1 1 100%; margin: 0;">保存 / 导出订单</button>
+                        <button class="btn-danger-small" onclick="processRefund(1)" style="flex: 1 1 45%; margin: 0; padding: 8px;">退款(仅退售价)</button>
+                        <button class="btn-danger-small" onclick="processRefund(2)" style="flex: 1 1 45%; margin: 0; padding: 8px;">退款(退售&成本)</button>
                     </div>
                 </div>
             </div>
@@ -1593,14 +1652,19 @@
     <div id="exportOrderModal" class="export-order-modal">
         <div class="export-order-content">
             <span class="close" onclick="closeModal('exportOrderModal')">&times;</span>
-            <h2 style="margin-bottom: 15px; font-size: 16px;">导出订单信息</h2>
+            <h2 style="margin-bottom: 15px; font-size: 16px;">保存 / 导出订单信息</h2>
+            <input type="hidden" id="exportEditOrderNumber">
             <div class="form-group">
                 <label for="exportPlatform">平台</label>
                 <input type="text" id="exportPlatform" placeholder="请输入平台名称">
             </div>
             <div class="form-group">
+                <label for="exportShop">店铺</label>
+                <input type="text" id="exportShop" placeholder="请输入店铺名称">
+            </div>
+            <div class="form-group">
                 <label for="exportDate">日期</label>
-                <input type="date" id="exportDate">
+                <input type="datetime-local" id="exportDate">
             </div>
             <div class="form-group">
                 <label for="exportOrderNumber">订单号</label>
@@ -1618,21 +1682,27 @@
                 <label for="exportTrackingNumber">快递单号</label>
                 <input type="text" id="exportTrackingNumber" placeholder="请输入快递单号">
             </div>
-            <div class="export-format-options">
-                <button class="export-format-btn" onclick="selectExportFormat('xlsx')">导出为 XLSX</button>
-                <button class="export-format-btn" onclick="selectExportFormat('text')">复制文本</button>
-                <button class="export-format-btn" onclick="copyForShipping()">发货</button>
+            <div class="form-group">
+                <label for="exportRemarks">备注</label>
+                <textarea id="exportRemarks" placeholder="请输入订单备注" rows="2"></textarea>
             </div>
-            <div class="copy-success-message" id="copySuccessMessage">已复制到剪贴板!</div>
+            <div class="export-format-options">
+                <button class="export-format-btn" onclick="triggerExport('xlsx')">导出为 XLSX</button>
+                <button class="export-format-btn" onclick="triggerExport('text')">复制文本</button>
+                <button class="export-format-btn" onclick="copyForShipping()">复制发货信息</button>
+            </div>
             <button class="btn-danger-small" onclick="clearOrderNumberAndRecipient()" style="width: 100%; margin-top: 10px;">清除订单号和收件信息</button>
-            <button class="btn-primary" onclick="performExport()" style="width: 100%; margin-top: 10px;">确认导出</button>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="btn-secondary" onclick="saveOrUpdateOrderFromCalculator(false)" style="width: 100%; margin: 0;">仅保存订单</button>
+                <button class="btn-primary" onclick="saveOrUpdateOrderFromCalculator(true)" style="width: 100%; margin: 0;">保存并导出</button>
+            </div>
         </div>
     </div>
 
     <div id="orderModal" class="order-modal">
         <div class="order-modal-content">
             <span class="close" onclick="closeOrderModal()">&times;</span>
-            <h2 id="orderModalTitle" style="margin-bottom: 15px; font-size: 16px;">录入订单信息</h2>
+            <h2 id="orderModalTitle" style="margin-bottom: 15px; font-size: 16px;">录入订单信息 (单商品)</h2>
             <form id="orderForm">
                 <input type="hidden" id="orderEditIndex">
                 <div class="order-form-group">
@@ -1655,7 +1725,7 @@
                 </div>
                 <div class="order-form-group">
                     <label for="orderDate">订单日期</label>
-                    <input type="date" id="orderDate">
+                    <input type="datetime-local" id="orderDate">
                 </div>
                 <div class="order-form-group">
                     <label for="orderProductName">商品名称</label>
@@ -1810,7 +1880,7 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal('batchOrderImportModal')">&times;</span>
             <h2 style="margin-bottom: 15px; font-size: 16px;">批量导入订单</h2>
-            <p style="margin-bottom: 12px; color: #666; font-size: 12px;">请选择Excel文件(.xlsx)进行批量导入</p>
+            <p style="margin-bottom: 12px; color: #666; font-size: 12px;">支持两种格式：1. 系统导出的合并订单文件。 2. 每个商品占一行的标准文件。</p>
             <input type="file" id="importOrderFile" class="file-input" accept=".xlsx" onchange="handleImportOrderFile()">
             <button class="btn-primary" onclick="document.getElementById('importOrderFile').click()" style="margin-bottom: 10px; width: 100%;">选择文件</button>
             <div id="importOrderFileName" style="margin-bottom: 12px; color: #666; font-size: 11px;"></div>
@@ -1822,20 +1892,13 @@
         <div class="nav-item" onclick="switchTab('product', this)">商品管理</div>
         <div class="nav-item active" onclick="switchTab('order', this)">订单管理</div>
     </div>
+    
+    <div id="toastNotification" class="toast-notification"></div>
 
     <script>
         /*
             开发人员说明 (Developer Note):
-            关于数据持久化 (Regarding Data Persistence):
-            - 当前系统使用浏览器的 localStorage 进行数据存储。这对于中小型数据集来说是方便快捷的。
-            - This system currently uses the browser's localStorage for data storage. This is convenient for small to medium-sized datasets.
-            局限性 (Limitations):
-            1. 存储容量 (Storage Capacity): localStorage 通常有 5-10MB 的大小限制。对于大量的订单数据，这可能会成为瓶颈。
-            2. 性能 (Performance): 当数据量变得非常大时，每次加载时读取和解析整个数据集可能会导致页面启动缓慢。
-            3. 数据安全 (Data Safety): 数据存储在用户的浏览器中。如果用户清除浏览器缓存或数据，所有信息都将丢失。它不是一个永久可靠的“数据库”。
-            改进建议 (Improvement Suggestions):
-            - 对于需要处理大量数据并要求更高可靠性的生产环境，建议将数据存储后端化（例如，使用 Node.js + SQL/NoSQL 数据库）或改用更强大的客户端数据库技术，如 IndexedDB。
-            - 本次修改未更改存储机制，以保持与原始代码结构的一致性。
+            - v10.6: 实现了智能订单导入解析器，现在系统导出的合并订单文件可以直接被再次导入。同时修复了移动端日期解析的兼容性问题，并添加了列隐藏/显示功能。
         */
         // 全局变量
         let products = [];
@@ -1855,22 +1918,26 @@
         let defaultPackingFee = 0;
         let defaultOtherFee = 0;
         let cartItems = [];
-        let selectedExportFormat = 'xlsx';
         let currentOrderEditIndex = -1;
         let orderEditMode = false;
         let currentOrderPage = 1;
         let orderItemsPerPage = 20;
-        let filteredOrders = [];
+        let filteredOrders = []; // Will now store grouped orders
         let orderSearchTimeout;
         let orderFilter = {};
+        let toastTimeout;
+        let columnVisibility = {}; // For column toggling
+        let orderSort = { column: 'orderDate', direction: 'desc' };
         
         document.addEventListener('DOMContentLoaded', function() {
             loadProductsFromStorage();
             loadOrdersFromStorage();
             loadDefaultValues();
+            loadColumnVisibility();
 
             searchProducts(); 
-            filterAndSearchOrders();
+            groupAndFilterOrders();
+            updateSortIndicators();
 
             document.getElementById('productForm').addEventListener('submit', saveProduct);
             document.getElementById('orderForm').addEventListener('submit', saveOrder);
@@ -1879,24 +1946,24 @@
                     hideAllDropdowns();
                 }
             });
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('orderDate').value = today;
-
-            // --- 问题1修复：默认显示订单管理页面 ---
+            
             switchTab('order');
         });
+        
+        function getFormattedCurrentDateTime() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            return now.toISOString().slice(0, 16);
+        }
 
         function loadProductsFromStorage() {
             try {
                 const storedData = localStorage.getItem('products');
                 if (storedData) {
                     products = JSON.parse(storedData);
-                } else {
-                    products = [];
                 }
-            } catch (error)
-            {
-                console.error('加载数据失败:', error);
+            } catch (error) {
+                console.error('加载商品数据失败:', error);
                 products = [];
             }
         }
@@ -1906,8 +1973,6 @@
                 const storedData = localStorage.getItem('orders');
                 if (storedData) {
                     orders = JSON.parse(storedData);
-                } else {
-                    orders = [];
                 }
             } catch (error) {
                 console.error('加载订单数据失败:', error);
@@ -1958,6 +2023,63 @@
                 console.error('保存订单数据失败:', error);
                 alert('保存订单数据失败，请检查存储空间');
             }
+        }
+        
+        function loadColumnVisibility() {
+            try {
+                const storedVisibility = localStorage.getItem('columnVisibility');
+                columnVisibility = storedVisibility ? JSON.parse(storedVisibility) : {
+                    platform: false,
+                    shop: false,
+                    remarks: false
+                };
+            } catch (e) {
+                columnVisibility = { platform: false, shop: false, remarks: false };
+            }
+            setupColumnToggleButtons();
+            applyColumnVisibility();
+        }
+
+        function saveColumnVisibility() {
+            localStorage.setItem('columnVisibility', JSON.stringify(columnVisibility));
+        }
+
+        function applyColumnVisibility() {
+            for (const colName in columnVisibility) {
+                const cells = document.querySelectorAll(`.col-${colName}`);
+                if (columnVisibility[colName]) {
+                    cells.forEach(cell => cell.classList.remove('col-hidden'));
+                } else {
+                    cells.forEach(cell => cell.classList.add('col-hidden'));
+                }
+            }
+        }
+        
+        function setupColumnToggleButtons() {
+            const container = document.getElementById('columnToggleControls');
+            container.innerHTML = `<span style="font-size: 12px; margin-right: 5px; color: #666;">列显示:</span>`;
+            const columns = [
+                { key: 'platform', name: '平台' },
+                { key: 'shop', name: '店铺' },
+                { key: 'remarks', name: '备注' }
+            ];
+            columns.forEach(col => {
+                const button = document.createElement('button');
+                button.className = 'btn-toggle-col';
+                button.textContent = col.name;
+                button.onclick = () => toggleColumn(col.key, button);
+                if (columnVisibility[col.key]) {
+                    button.classList.add('active');
+                }
+                container.appendChild(button);
+            });
+        }
+
+        function toggleColumn(colName, btnElement) {
+            columnVisibility[colName] = !columnVisibility[colName];
+            btnElement.classList.toggle('active');
+            saveColumnVisibility();
+            applyColumnVisibility();
         }
 
         function debounceSearch() {
@@ -2014,12 +2136,6 @@
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
             hideAllDropdowns();
-            if (modalId === 'exportOrderModal') {
-                document.getElementById('copySuccessMessage').style.display = 'none';
-                document.querySelectorAll('.export-format-btn').forEach(btn => btn.classList.remove('selected'));
-                document.querySelector('.export-format-btn').classList.add('selected');
-                selectedExportFormat = 'xlsx';
-            }
         }
 
         function previewImage() {
@@ -2096,7 +2212,6 @@
                 updatedAt: new Date().toISOString()
             };
             if (editMode) {
-                // --- 问题2修复：添加历史记录逻辑 ---
                 const oldProduct = products[index];
                 const history = oldProduct.history || [];
                 if (oldProduct.baseCost !== baseCost) {
@@ -2115,9 +2230,9 @@
                 products.push(product);
             }
             saveToLocalStorage();
-            searchProducts(); // 使用searchProducts来重新渲染，因为它会处理过滤
+            searchProducts();
             closeModal('productModal');
-            alert(editMode ? '商品信息更新成功！' : '商品信息录入成功！');
+            showToast(editMode ? '商品信息更新成功！' : '商品信息录入成功！');
         }
 
         function deleteProduct(index) {
@@ -2138,7 +2253,7 @@
                 historyContent.innerHTML = '<p style="text-align: center; color: #666; padding: 15px;">暂无历史记录</p>';
             } else {
                 let html = '';
-                history.slice().reverse().forEach(record => { // reverse to show latest first
+                history.slice().reverse().forEach(record => {
                     const time = new Date(record.time).toLocaleString('zh-CN');
                     html += `
                         <div class="history-item">
@@ -2212,8 +2327,8 @@
             document.getElementById('nextBtn').disabled = currentPage >= totalPages || itemsPerPage === 'all';
         }
 
-        function getTextExpandButton(type, index, text) {
-            return (text && text.length > 12) ? `<span class="expand-btn" onclick="toggleExpand('${type}-${index}')">展开</span>` : '';
+        function getTextExpandButton(type, index, text, minLength = 15) {
+            return (text && text.length > minLength) ? `<span class="expand-btn" onclick="toggleExpand('${type}-${index}')">展开</span>` : '';
         }
 
         function getRemarkExpandButton(index, remarks) {
@@ -2311,7 +2426,7 @@
                         });
                     }
                     return {
-                        '渠道': product.channel || '', '商品名称': product.productName || '', 'SKU/规格': product.sku || '', '图片URL': product.imageUrl || '', '裸成本': product.baseCost || 0, '运费': product.shippingCost || 0, '其他费用': product.otherCost || 0, '总成本': product.totalCost || 0, '创建时间': product.createdAt ? new Date(product.createdAt).toLocaleString('zh-CN') : '', '更新时间': product.updatedAt ? new Date(product.updatedAt).toLocaleString('zh-CN') : '', ...remarkData, ...historyData
+                        '渠道': product.channel || '', '商品名称': product.productName || '', 'SKU/规格': product.sku || '', '图片URL': product.imageUrl || '', '裸成本': product.baseCost || 0, '运费': product.shippingCost || 0, '其他费用': product.otherCost || 0, '总成本': product.totalCost || 0, '创建时间': product.createdAt ? new Date(product.createdAt) : null, '更新时间': product.updatedAt ? new Date(product.updatedAt) : null, ...remarkData, ...historyData
                     };
                 });
                 const ws = XLSX.utils.json_to_sheet(exportData);
@@ -2319,7 +2434,7 @@
                 XLSX.utils.book_append_sheet(wb, ws, '商品信息');
                 const fileName = `商品信息_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')}.xlsx`;
                 XLSX.writeFile(wb, fileName);
-                alert('导出成功！');
+                showToast('商品信息导出成功！');
             } catch (error) {
                 console.error('导出失败:', error);
                 alert('导出失败，请重试');
@@ -2351,7 +2466,7 @@
                 reader.onload = function(e) {
                     try {
                         const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, {type: 'array'});
+                        const workbook = XLSX.read(data, {type: 'array', cellDates: true});
                         const firstSheetName = workbook.SheetNames[0];
                         const worksheet = workbook.Sheets[firstSheetName];
                         importFileData = XLSX.utils.sheet_to_json(worksheet);
@@ -2385,8 +2500,11 @@
                             return (parts.length === 4) ? { time: new Date(parts[0]).toISOString(), field: parts[1], oldValue: parseFloat(parts[2]) || parts[2], newValue: parseFloat(parts[3]) || parts[3] } : null;
                         }).filter(Boolean);
                         
+                        const createdAt = row['创建时间'];
+                        const updatedAt = row['更新时间'];
+
                         const product = {
-                            channel: row['渠道'] || '', productName: row['商品名称'] || '', sku: row['SKU/规格'] || '', imageUrl: row['图片URL'] || '', baseCost: parseFloat(row['裸成本']) || 0, shippingCost: parseFloat(row['运费']) || 0, otherCost: parseFloat(row['其他费用']) || 0, totalCost: parseFloat(row['总成本']) || 0, remarks: remarks, history: history, createdAt: row['创建时间'] ? new Date(row['创建时间']).toISOString() : new Date().toISOString(), updatedAt: row['更新时间'] ? new Date(row['更新时间']).toISOString() : new Date().toISOString()
+                            channel: row['渠道'] || '', productName: row['商品名称'] || '', sku: row['SKU/规格'] || '', imageUrl: row['图片URL'] || '', baseCost: parseFloat(row['裸成本']) || 0, shippingCost: parseFloat(row['运费']) || 0, otherCost: parseFloat(row['其他费用']) || 0, totalCost: parseFloat(row['总成本']) || 0, remarks: remarks, history: history, createdAt: (createdAt instanceof Date && !isNaN(createdAt)) ? createdAt.toISOString() : new Date().toISOString(), updatedAt: (updatedAt instanceof Date && !isNaN(updatedAt)) ? updatedAt.toISOString() : new Date().toISOString()
                         };
 
                         if (product.totalCost === 0) {
@@ -2405,7 +2523,7 @@
                 if (importedCount > 0) {
                     saveToLocalStorage();
                     searchProducts();
-                    alert(`导入完成！成功导入 ${importedCount} 条记录${errorCount > 0 ? `，${errorCount} 条记录有错误` : ''}`);
+                    showToast(`导入完成！成功 ${importedCount} 条${errorCount > 0 ? `，失败 ${errorCount} 条` : ''}`);
                     closeModal('batchImportModal');
                 } else {
                     alert('没有有效的数据可以导入');
@@ -2427,7 +2545,7 @@
                     saveToLocalStorage();
                     searchProducts();
                     closeModal('clearDataModal');
-                    alert('所有数据已清理完成！');
+                    showToast('所有商品数据已清理！');
                 }
             } else {
                 alert('密码错误！');
@@ -2435,6 +2553,8 @@
         }
 
         function openProfitCalculator() {
+            document.getElementById('profitCalculatorTitle').textContent = '订单结算';
+            document.getElementById('calculatorEditOrderNumber').value = '';
             clearProfitCalculator();
             document.getElementById('orderShipping').value = defaultOrderShipping;
             document.getElementById('packingFee').value = defaultPackingFee;
@@ -2452,6 +2572,7 @@
             document.getElementById('packingFee').value = '';
             document.getElementById('otherFee').value = '';
             document.getElementById('profitResult').style.display = 'none';
+            document.getElementById('calculatorEditOrderNumber').value = '';
         }
         
         function closeProfitCalculator() {
@@ -2570,8 +2691,11 @@
             defaultOtherFee = otherFee;
             saveDefaultValues();
             
-            if (cartItems.length > 0 && salePrice > 0) {
-                const totalProductCost = cartItems.reduce((sum, item) => sum + (products[item.index].totalCost || 0) * item.quantity, 0);
+            if (cartItems.length > 0 || salePrice !== 0 || orderShipping !== 0 || packingFee !== 0 || otherFee !== 0) {
+                const totalProductCost = cartItems.reduce((sum, item) => {
+                    const product = products[item.index];
+                    return sum + (product ? (product.totalCost || 0) * item.quantity : 0);
+                }, 0);
                 const orderTotalCost = totalProductCost + orderShipping + packingFee + otherFee;
                 const profit = salePrice - orderTotalCost;
                 
@@ -2582,7 +2706,7 @@
                 document.getElementById('pc_orderTotalCost').textContent = orderTotalCost.toFixed(2);
                 document.getElementById('pc_orderSalePrice').textContent = salePrice.toFixed(2);
                 const profitElement = document.getElementById('pc_profitAmount');
-                profitElement.textContent = profit.toFixed(2);
+                profitElement.textContent = `¥${profit.toFixed(2)}`;
                 profitElement.className = profit >= 0 ? 'profit-positive' : 'profit-negative';
                 document.getElementById('profitResult').style.display = 'block';
             } else {
@@ -2598,54 +2722,57 @@
         }
 
         function openExportOrderModal() {
-            const now = new Date();
-            const defaultDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-            document.getElementById('exportDate').value = defaultDate;
-            document.getElementById('exportPlatform').value = localStorage.getItem('lastPlatform') || '';
-            document.getElementById('exportExpress').value = localStorage.getItem('lastExpress') || '';
+            const editOrderNum = document.getElementById('calculatorEditOrderNumber').value;
+            if (!editOrderNum) {
+                document.getElementById('exportDate').value = getFormattedCurrentDateTime();
+                document.getElementById('exportPlatform').value = localStorage.getItem('lastPlatform') || '';
+                document.getElementById('exportShop').value = localStorage.getItem('lastShop') || '';
+                document.getElementById('exportExpress').value = localStorage.getItem('lastExpress') || '';
+                document.getElementById('exportOrderNumber').value = '';
+                document.getElementById('exportRecipientInfo').value = '';
+                document.getElementById('exportTrackingNumber').value = '';
+                document.getElementById('exportRemarks').value = '';
+            }
             document.getElementById('exportOrderModal').style.display = 'block';
-        }
-
-        function selectExportFormat(format) {
-            selectedExportFormat = format;
-            document.querySelectorAll('.export-format-btn').forEach(btn => btn.classList.remove('selected'));
-            event.target.classList.add('selected');
-            document.getElementById('copySuccessMessage').style.display = 'none';
         }
 
         function clearOrderNumberAndRecipient() {
             document.getElementById('exportOrderNumber').value = '';
             document.getElementById('exportRecipientInfo').value = '';
         }
+        
+        async function triggerExport(format) {
+            await performExport(format);
+        }
 
-        async function performExport() {
+        async function performExport(format) {
             const platform = document.getElementById('exportPlatform').value.trim();
             const dateInput = document.getElementById('exportDate').value;
             const orderNumber = document.getElementById('exportOrderNumber').value.trim();
             const recipientInfo = document.getElementById('exportRecipientInfo').value.trim();
             const express = document.getElementById('exportExpress').value.trim();
             const trackingNumber = document.getElementById('exportTrackingNumber').value.trim();
+            const remarks = document.getElementById('exportRemarks').value.trim();
 
-            localStorage.setItem('lastPlatform', platform);
-            localStorage.setItem('lastExpress', express);
-
-            if (!platform || !dateInput || !orderNumber || !recipientInfo) {
-                alert('请填写所有必填的订单信息！');
+            if (!platform || !dateInput || !orderNumber) {
+                alert('请填写平台, 日期和订单号！');
                 return;
             }
 
             const cartDetailsString = cartItems.map(item => {
                 const p = products[item.index];
-                return p ? `${p.productName}(${p.sku}) x ${item.quantity} = ${(p.totalCost * item.quantity).toFixed(2)}` : '';
-            }).join('\n');
+                return p ? `${p.productName}(${p.sku}) x ${item.quantity} = ${(p.totalCost * item.quantity).toFixed(2)}` : '商品信息缺失';
+            }).join('\n') || '无商品';
 
             const exportData = {
                 platform, 
-                formattedDate: new Date(dateInput).toLocaleDateString('zh-CN'), 
+                shop: document.getElementById('exportShop').value.trim(),
+                formattedDate: dateInput ? new Date(dateInput).toLocaleString('zh-CN', { hour12: false }) : '', 
                 orderNumber, 
                 recipientInfo, 
                 express, 
-                trackingNumber, 
+                trackingNumber,
+                remarks,
                 cartDetailsString,
                 productTotalCost: document.getElementById('pc_productTotalCost').textContent,
                 orderShippingCost: document.getElementById('pc_orderShippingCost').textContent,
@@ -2656,66 +2783,81 @@
                 profitAmount: document.getElementById('pc_profitAmount').textContent
             };
 
-            if (selectedExportFormat === 'xlsx') {
+            if (format === 'xlsx') {
                 try {
                     const ws = XLSX.utils.aoa_to_sheet([
-                        ['平台', '日期', '订单号', '收件信息', '快递', '快递单号', '商品详情', '商品总成本', '订单运费', '打包费', '其他费用', '订单总成本', '订单售价', '利润'],
-                        [exportData.platform, exportData.formattedDate, exportData.orderNumber, exportData.recipientInfo, exportData.express, exportData.trackingNumber, exportData.cartDetailsString, exportData.productTotalCost, exportData.orderShippingCost, exportData.packingCost, exportData.otherCostResult, exportData.orderTotalCost, exportData.orderSalePrice, exportData.profitAmount]
+                        ['平台', '店铺', '日期', '订单号', '收件信息', '快递', '快递单号', '备注', '商品详情', '商品总成本', '订单运费', '打包费', '其他费用', '订单总成本', '订单售价', '利润'],
+                        [exportData.platform, exportData.shop, new Date(dateInput), exportData.orderNumber, exportData.recipientInfo, exportData.express, exportData.trackingNumber, exportData.remarks, exportData.cartDetailsString, parseFloat(exportData.productTotalCost), parseFloat(exportData.orderShippingCost), parseFloat(exportData.packingCost), parseFloat(exportData.otherCostResult), parseFloat(exportData.orderTotalCost), parseFloat(exportData.orderSalePrice), parseFloat(exportData.profitAmount.replace('¥',''))]
                     ]);
                     const wb = XLSX.utils.book_new();
                     XLSX.utils.book_append_sheet(wb, ws, '订单信息');
                     XLSX.writeFile(wb, `订单_${exportData.orderNumber}.xlsx`);
-                    alert('订单信息已导出为 XLSX 文件！');
-                    closeModal('exportOrderModal');
+                    showToast('订单导出文件已开始下载！');
                 } catch (e) { alert('导出 XLSX 文件失败，请重试'); }
-            } else {
-                const textToCopy = `平台: ${exportData.platform}\n日期: ${exportData.formattedDate}\n订单号: ${exportData.orderNumber}\n收件信息: ${exportData.recipientInfo}\n商品详情:\n${exportData.cartDetailsString}\n商品总成本: ${exportData.productTotalCost}\n订单运费: ${exportData.orderShippingCost}\n打包费: ${exportData.packingCost}\n其他费用: ${exportData.otherCostResult}\n订单总成本: ${exportData.orderTotalCost}\n订单售价: ${exportData.orderSalePrice}\n利润: ${exportData.profitAmount}${exportData.express ? `\n快递: ${exportData.express}` : ''}${exportData.trackingNumber ? `\n快递单号: ${exportData.trackingNumber}` : ''}`;
+            } else if (format === 'text') {
+                const textToCopy = `平台: ${exportData.platform}\n店铺: ${exportData.shop}\n日期: ${exportData.formattedDate}\n订单号: ${exportData.orderNumber}\n收件信息: ${exportData.recipientInfo}\n商品详情:\n${exportData.cartDetailsString}\n商品总成本: ${exportData.productTotalCost}\n订单运费: ${exportData.orderShippingCost}\n打包费: ${exportData.packingCost}\n其他费用: ${exportData.otherCostResult}\n订单总成本: ${exportData.orderTotalCost}\n订单售价: ${exportData.orderSalePrice}\n利润: ${exportData.profitAmount}${exportData.express ? `\n快递: ${exportData.express}` : ''}${exportData.trackingNumber ? `\n快递单号: ${exportData.trackingNumber}` : ''}${exportData.remarks ? `\n备注: ${exportData.remarks}` : ''}`;
                 await copyToClipboard(textToCopy, '订单信息已复制！');
             }
         }
 
         async function copyForShipping() {
             const recipientInfo = document.getElementById('exportRecipientInfo').value.trim();
-            if (!recipientInfo || cartItems.length === 0) {
-                alert('请填写收件信息且购物车不能为空！');
+            if (cartItems.length === 0) {
+                alert('购物车不能为空！');
                 return;
             }
             const productDetailsString = cartItems.map(item => {
                 const p = products[item.index];
                 return p ? `${p.sku} x ${item.quantity}` : '';
-            }).join('\n');
+            }).join('; ');
             const textToCopy = `${recipientInfo}\n${productDetailsString}`;
             await copyToClipboard(textToCopy, '发货信息已复制！');
         }
 
         async function copyToClipboard(text, successMessage) {
-            try {
-                if (navigator.clipboard && window.isSecureContext) {
+            if (navigator.clipboard && window.isSecureContext) {
+                try {
                     await navigator.clipboard.writeText(text);
-                } else {
-                    const textArea = document.createElement("textarea");
-                    textArea.value = text;
-                    textArea.style.position = 'fixed';
-                    textArea.style.left = '-9999px';
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
+                    showToast(successMessage);
+                    return;
+                } catch (err) {
+                    console.error('使用 Clipboard API 复制失败:', err);
                 }
-                showCopySuccess(successMessage);
+            }
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.setAttribute('readonly', '');
+            textArea.style.position = 'absolute';
+            textArea.style.left = '-9999px';
+            textArea.style.top = (window.pageYOffset || document.documentElement.scrollTop) + 'px';
+            document.body.appendChild(textArea);
+            textArea.select();
+            textArea.setSelectionRange(0, textArea.value.length);
+            let success = false;
+            try {
+                success = document.execCommand('copy');
             } catch (err) {
-                alert(`复制失败，请手动复制:\n${text}`);
+                console.error('使用 execCommand 复制失败:', err);
+            }
+            document.body.removeChild(textArea);
+            if (success) {
+                showToast(successMessage);
+            } else {
+                window.prompt('自动复制失败，请手动复制以下文本:', text);
             }
         }
         
-        function showCopySuccess(message = '已复制到剪贴板!') {
-            const successMsg = document.getElementById('copySuccessMessage');
-            successMsg.textContent = message;
-            successMsg.style.display = 'block';
-            setTimeout(() => { successMsg.style.display = 'none'; }, 3000);
+        function showToast(message) {
+            const toast = document.getElementById('toastNotification');
+            if (!toast) return;
+            toast.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
 
-        // --- Autocomplete Functions ---
         function showAllAutocomplete(inputId, dropdownId, fieldName) {
             const dropdown = document.getElementById(dropdownId);
             const values = [...new Set(products.map(p => p[fieldName]).filter(Boolean))];
@@ -2817,16 +2959,14 @@
             }
         });
 
-        // --- 订单管理功能 ---
         function switchTab(tabName, element) {
             document.querySelector('.container').style.display = (tabName === 'product') ? 'block' : 'none';
             document.getElementById('orderContent').style.display = (tabName === 'order') ? 'block' : 'none';
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             
-            // 如果是通过点击触发的，element会存在
             if (element) {
                 element.classList.add('active');
-            } else { // 如果是页面加载时调用的
+            } else {
                  const targetNav = tabName === 'product' ? document.querySelector('.nav-item:nth-child(1)') : document.querySelector('.nav-item:nth-child(2)');
                  targetNav.classList.add('active');
             }
@@ -2834,7 +2974,7 @@
 
         function openAddOrderModal() {
             orderEditMode = false;
-            document.getElementById('orderModalTitle').textContent = '录入订单信息';
+            document.getElementById('orderModalTitle').textContent = '录入订单信息 (单商品)';
             document.getElementById('orderForm').reset();
             document.getElementById('orderEditIndex').value = '';
             document.getElementById('orderShippingFee').value = localStorage.getItem('lastOrderShippingFee') || '0';
@@ -2842,7 +2982,7 @@
             document.getElementById('orderOtherFee').value = localStorage.getItem('lastOrderOtherFee') || '0';
             document.getElementById('orderExpress').value = localStorage.getItem('lastOrderExpress') || '';
             document.getElementById('orderTrackingNumber').value = '待发货';
-            document.getElementById('orderDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('orderDate').value = getFormattedCurrentDateTime();
             document.getElementById('orderImagePreview').innerHTML = '<div class="placeholder">图片预览区域</div>';
             calculateOrderCosts();
             hideAllDropdowns();
@@ -2878,8 +3018,7 @@
             if (products.length > 0) {
                 dropdown.innerHTML = products.slice(0, 50).map((product, index) => {
                     const text = (inputId === 'orderProductName') ? product.productName : product.sku;
-                    const type = (inputId === 'orderProductName') ? 'name' : 'sku';
-                    return `<div class="order-autocomplete-item" onclick="selectOrderProduct(${index}, '${type}')">${text}</div>`;
+                    return `<div class="order-autocomplete-item" onclick="selectOrderProduct(${index})">${text}</div>`;
                 }).join('');
                 dropdown.style.display = 'block';
                 activeDropdown = dropdownId;
@@ -2896,13 +3035,11 @@
             
             const dropdown = document.getElementById(dropdownId);
             const searchField = (inputId === 'orderProductName') ? 'productName' : 'sku';
-            const displayField = searchField;
-            const type = (inputId === 'orderProductName') ? 'name' : 'sku';
-
+            
             const filtered = products.filter(p => p[searchField] && p[searchField].toLowerCase().includes(searchTerm));
             if (filtered.length > 0) {
                 dropdown.innerHTML = filtered.slice(0, 20).map(product => 
-                    `<div class="order-autocomplete-item" onclick="selectOrderProduct(${products.indexOf(product)}, '${type}')">${product[displayField]}</div>`
+                    `<div class="order-autocomplete-item" onclick="selectOrderProduct(${products.indexOf(product)})">${product[searchField]}</div>`
                 ).join('');
                 dropdown.style.display = 'block';
                 activeDropdown = dropdownId;
@@ -2917,12 +3054,10 @@
             hideDropdown(activeDropdown);
         }
 
-        function selectOrderProduct(productIndex, type) {
+        function selectOrderProduct(productIndex) {
             const pIndex = parseInt(productIndex, 10);
-            if (isNaN(pIndex) || pIndex < 0 || pIndex >= products.length) {
-                console.error('Invalid product index:', productIndex);
-                return;
-            }
+            if (isNaN(pIndex) || pIndex < 0 || pIndex >= products.length) return;
+            
             const product = products[pIndex];
             document.getElementById('orderProductName').value = product.productName;
             document.getElementById('orderSku').value = product.sku;
@@ -3003,11 +3138,11 @@
             }
             
             saveOrdersToLocalStorage();
-            filterAndSearchOrders();
+            groupAndFilterOrders();
             closeOrderModal();
-            alert(orderEditMode ? '订单信息更新成功！' : '订单信息录入成功！');
+            showToast(orderEditMode ? '订单更新成功！' : '订单录入成功！');
         }
-
+        
         function renderOrderTable() {
             let pageOrders;
             let totalPages;
@@ -3022,31 +3157,36 @@
 
             const tableBody = document.getElementById('orderTableBody');
             if (pageOrders.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="12" style="text-align: center; padding: 30px;"><div class="empty-state"><div>📦</div><p>暂无订单信息</p></div></td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="13" style="text-align: center; padding: 30px;"><div class="empty-state"><div>📦</div><p>暂无订单信息</p></div></td></tr>`;
             } else {
-                tableBody.innerHTML = pageOrders.map((order, index) => {
+                tableBody.innerHTML = pageOrders.map((group, index) => {
                     const displayIndex = orderItemsPerPage === 'all' ? index : (currentOrderPage - 1) * orderItemsPerPage + index;
-                    const originalOrderIndex = order.originalIndex;
-                    const recipientInfo = order.recipientInfo || '';
+                    const recipientInfo = group.recipientInfo || '';
+                    const productDetailsHTML = group.items.map(o => `${o.productName || ''} (${o.sku || ''}) x ${o.quantity || 1}`).join('<br>');
+                    const dateDisplay = group.orderDate ? new Date(group.orderDate).toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }).replace(/\//g, '-') : '';
+
                     return `
                         <tr>
-                            <td>${order.platform || ''}</td>
-                            <td>${order.shop || ''}</td>
-                            <td>${order.orderNumber || ''}</td>
-                            <td>${order.orderDate ? new Date(order.orderDate).toLocaleDateString('zh-CN', {timeZone: 'UTC'}) : ''}</td>
-                            <td><div class="text-expandable" id="order-product-${displayIndex}"><div class="text-limited">${order.productName || ''} (${order.sku || ''}) x ${order.quantity || 1}</div>${((order.productName && order.productName.length > 6) || (order.sku && order.sku.length > 6)) ? `<span class="expand-btn" onclick="toggleExpand('order-product-${displayIndex}')">展开</span>` : ''}</div></td>
-                            <td class="product-image-cell">${order.imageUrl ? `<img src="${order.imageUrl}" alt="${order.productName}" onclick="showImageModal('${order.imageUrl}')" onerror="this.parentElement.innerHTML='<div class=\\'no-image\\'>无图片</div>'">` : '<div class="no-image">无图片</div>'}</td>
-                            <td>¥${(order.salePrice || 0).toFixed(2)}</td>
-                            <td><div class="cost-container"><div class="order-cost-summary">¥${(order.totalCost || 0).toFixed(2)}</div><div class="order-cost-details" id="order-cost-details-${displayIndex}">商品: ¥${(order.productCost || 0).toFixed(2)}<br>运费: ¥${(order.shippingFee || 0).toFixed(2)}<br>打包: ¥${(order.packingFee || 0).toFixed(2)}<br>其他: ¥${(order.otherFee || 0).toFixed(2)}</div><span class="toggle-order-cost" onclick="toggleOrderCostDetails(${displayIndex})">详情</span></div></td>
-                            <td><span class="${(order.profit || 0) >= 0 ? 'profit-positive' : 'profit-negative'}">¥${(order.profit || 0).toFixed(2)}</span><div style="font-size: 9px; color: #999;">${(order.profitMargin || 0).toFixed(2)}%</div></td>
-                            <td>${order.express || ''}<br/>${order.trackingNumber || ''}</td>
+                            <td class="col-platform">${group.platform || ''}</td>
+                            <td class="col-shop">${group.shop || ''}</td>
+                            <td>${group.orderNumber || ''}</td>
+                            <td>${dateDisplay}</td>
+                            <td><div class="text-expandable" id="order-product-${displayIndex}"><div class="text-limited">${productDetailsHTML}</div>${getTextExpandButton('order-product', displayIndex, productDetailsHTML, 20)}</div></td>
+                            <td class="product-image-cell">${group.imageUrl ? `<img src="${group.imageUrl}" alt="${group.items[0]?.productName}" onclick="showImageModal('${group.imageUrl}')" onerror="this.parentElement.innerHTML='<div class=\\'no-image\\'>无图片</div>'">` : '<div class="no-image">无图片</div>'}</td>
+                            <td>¥${(group.totalSalePrice || 0).toFixed(2)}</td>
+                            <td><div class="cost-container"><div class="order-cost-summary">¥${(group.totalCost || 0).toFixed(2)}</div><div class="order-cost-details" id="order-cost-details-${displayIndex}">商品: ¥${(group.totalProductCost || 0).toFixed(2)}<br>运费: ¥${(group.shippingFee || 0).toFixed(2)}<br>打包: ¥${(group.packingFee || 0).toFixed(2)}<br>其他: ¥${(group.otherFee || 0).toFixed(2)}</div><span class="toggle-order-cost" onclick="toggleOrderCostDetails(${displayIndex})">详情</span></div></td>
+                            <td><span class="${(group.totalProfit || 0) >= 0 ? 'profit-positive' : 'profit-negative'}">¥${(group.totalProfit || 0).toFixed(2)}</span><div style="font-size: 9px; color: #999;">${(group.profitMargin || 0).toFixed(2)}%</div></td>
+                            <td>${group.express || ''}<br/>${group.trackingNumber || ''}</td>
                             <td><div class="text-expandable" id="order-recipient-${displayIndex}"><div class="text-limited">${recipientInfo}</div>${getTextExpandButton('order-recipient', displayIndex, recipientInfo)}</div></td>
-                            <td><div class="order-action-container"><div class="order-action-main" onclick="toggleOrderActionButtons(${displayIndex})">操作</div><div class="order-action-buttons" id="order-action-buttons-${displayIndex}"><button class="order-action-btn edit" onclick="openEditOrderModal(${originalOrderIndex})">编辑</button><button class="order-action-btn delete" onclick="deleteOrder(${originalOrderIndex})">删除</button><button class="order-action-btn copy" onclick="copyOrderInfo(${originalOrderIndex})">复制</button></div></div></td>
+                            <td class="col-remarks">${group.remarks || ''}</td>
+                            <td><div class="order-action-container"><div class="order-action-main" onclick="toggleOrderActionButtons(${displayIndex})">操作</div><div class="order-action-buttons" id="order-action-buttons-${displayIndex}"><button class="order-action-btn edit" onclick="editOrderGroup('${group.orderNumber}')">编辑</button><button class="order-action-btn delete" onclick="deleteOrderGroup('${group.orderNumber}')">删除</button><button class="order-action-btn copy" onclick="copyOrderInfo('${group.orderNumber}')">复制</button></div></div></td>
                         </tr>
                     `;
                 }).join('');
             }
             
+            applyColumnVisibility();
+
             if (orderItemsPerPage === 'all') {
                 document.getElementById('orderPageInfo').textContent = `共 ${filteredOrders.length} 条记录`;
             } else {
@@ -3056,57 +3196,66 @@
             document.getElementById('orderNextBtn').disabled = currentOrderPage >= totalPages || orderItemsPerPage === 'all';
         }
 
-
-        function openEditOrderModal(actualIndex) {
-            const order = orders[actualIndex];
-            if (!order) {
-                console.error("Order not found for index:", actualIndex);
+        function editOrderGroup(orderNumber) {
+            const itemsToEdit = orders.filter(o => o.orderNumber === orderNumber);
+            if(itemsToEdit.length === 0) {
+                alert('未找到该订单！');
                 return;
             }
-            orderEditMode = true;
-            document.getElementById('orderModalTitle').textContent = '编辑订单信息';
-            document.getElementById('orderEditIndex').value = actualIndex;
-
-            // --- 问题3修复：从循环赋值改为直接赋值，确保ID正确匹配 ---
-            document.getElementById('orderPlatform').value = order.platform || '';
-            document.getElementById('orderShop').value = order.shop || '';
-            document.getElementById('orderNumber').value = order.orderNumber || '';
-            document.getElementById('orderDate').value = order.orderDate || '';
-            document.getElementById('orderProductName').value = order.productName || '';
-            document.getElementById('orderSku').value = order.sku || '';
-            document.getElementById('orderImageUrl').value = order.imageUrl || '';
-            document.getElementById('orderQuantity').value = order.quantity || 1;
-            document.getElementById('orderSalePrice').value = order.salePrice || 0;
-            document.getElementById('orderProductCost').value = order.productCost || 0;
-            document.getElementById('orderShippingFee').value = order.shippingFee || 0;
-            document.getElementById('orderPackingFee').value = order.packingFee || 0;
-            document.getElementById('orderOtherFee').value = order.otherFee || 0;
-            document.getElementById('orderTotalCost').value = order.totalCost || 0;
-            document.getElementById('orderProfit').value = order.profit || 0;
-            document.getElementById('orderProfitMargin').value = order.profitMargin || 0;
-            document.getElementById('orderRecipientInfo').value = order.recipientInfo || '';
-            document.getElementById('orderExpress').value = order.express || '';
-            document.getElementById('orderTrackingNumber').value = order.trackingNumber || '';
-            document.getElementById('orderRemarks').value = order.remarks || '';
             
-            const preview = document.getElementById('orderImagePreview');
-            preview.innerHTML = order.imageUrl ? `<img src="${order.imageUrl}" alt="预览图片" onerror="this.parentElement.innerHTML='<div class=\\'placeholder\\'>图片加载失败</div>'">` : '<div class="placeholder">图片预览区域</div>';
-            hideAllDropdowns();
-            document.getElementById('orderModal').style.display = 'block';
+            clearProfitCalculator();
+
+            cartItems = itemsToEdit.map(orderItem => {
+                if (orderItem.productName === 'N/A' || orderItem.sku === 'N/A') return null;
+                const productIndex = products.findIndex(p => p.productName === orderItem.productName && p.sku === orderItem.sku);
+                if (productIndex === -1) return null;
+                return {
+                    index: productIndex,
+                    quantity: orderItem.quantity
+                };
+            }).filter(item => item !== null);
+
+            updateCartDisplay();
+
+            const firstItem = itemsToEdit[0];
+            const totalSalePrice = itemsToEdit.reduce((sum, item) => sum + (item.salePrice || 0), 0);
+            
+            document.getElementById('salePrice').value = totalSalePrice;
+            document.getElementById('orderShipping').value = firstItem.shippingFee;
+            document.getElementById('packingFee').value = firstItem.packingFee;
+            document.getElementById('otherFee').value = firstItem.otherFee;
+
+            calculateProfit();
+
+            document.getElementById('exportPlatform').value = firstItem.platform;
+            document.getElementById('exportShop').value = firstItem.shop;
+            document.getElementById('exportDate').value = firstItem.orderDate;
+            document.getElementById('exportOrderNumber').value = firstItem.orderNumber;
+            document.getElementById('exportRecipientInfo').value = firstItem.recipientInfo;
+            document.getElementById('exportExpress').value = firstItem.express;
+            document.getElementById('exportTrackingNumber').value = firstItem.trackingNumber;
+            document.getElementById('exportRemarks').value = firstItem.remarks || '';
+
+            document.getElementById('profitCalculatorTitle').textContent = `编辑订单: ${orderNumber}`;
+            document.getElementById('calculatorEditOrderNumber').value = orderNumber;
+            document.getElementById('profitCalculatorModal').style.display = 'block';
         }
 
-        function deleteOrder(actualIndex) {
-            if (confirm('确定要删除这个订单吗？')) {
-                orders.splice(actualIndex, 1);
+        function deleteOrderGroup(orderNumber) {
+            if (confirm(`确定要删除订单号为 "${orderNumber}" 的所有相关记录吗？`)) {
+                orders = orders.filter(o => o.orderNumber !== orderNumber);
                 saveOrdersToLocalStorage();
-                filterAndSearchOrders();
+                groupAndFilterOrders();
             }
         }
 
-        async function copyOrderInfo(actualIndex) {
-            const order = orders[actualIndex];
-            const textToCopy = `${order.recipientInfo || ''}\n${order.sku || ''} * ${order.quantity || 1}件`;
-            await copyToClipboard(textToCopy, '订单信息已复制到剪贴板！');
+        async function copyOrderInfo(orderNumber) {
+            const itemsToCopy = orders.filter(o => o.orderNumber === orderNumber);
+            if (itemsToCopy.length === 0) return;
+            const firstItem = itemsToCopy[0];
+            const productDetails = itemsToCopy.map(o => `${o.sku || ''} * ${o.quantity || 1}件`).join('\n');
+            const textToCopy = `${firstItem.recipientInfo || ''}\n${productDetails}`;
+            await copyToClipboard(textToCopy, '订单信息已复制！');
         }
 
         function toggleOrderCostDetails(index) {
@@ -3127,7 +3276,7 @@
             clearTimeout(orderSearchTimeout);
             orderSearchTimeout = setTimeout(() => {
                 currentOrderPage = 1;
-                filterAndSearchOrders();
+                groupAndFilterOrders();
             }, 300);
         }
 
@@ -3174,11 +3323,11 @@
                 endDate: document.getElementById('endDate').value,
             };
             currentOrderPage = 1;
-            filterAndSearchOrders();
+            groupAndFilterOrders();
             closeOrderFilterModal();
         }
 
-        function filterAndSearchOrders() {
+        function groupAndFilterOrders() {
             const searchTerm = document.getElementById('orderSearchInput').value.toLowerCase();
             let tempOrders = [...orders];
 
@@ -3194,65 +3343,293 @@
                 const today = now.getTime();
                 
                 if (orderFilter.dateRange === 'today') {
-                    tempOrders = tempOrders.filter(o => new Date(o.orderDate).getTime() >= today);
+                    tempOrders = tempOrders.filter(o => o.orderDate && new Date(o.orderDate.slice(0, 10)).getTime() >= today);
                 } else if (orderFilter.dateRange === 'yesterday') {
                     const yesterday = new Date(now);
                     yesterday.setDate(now.getDate() - 1);
                     tempOrders = tempOrders.filter(o => {
-                        const orderDate = new Date(o.orderDate);
+                         if (!o.orderDate) return false;
+                        const orderDate = new Date(o.orderDate.slice(0, 10));
                         return orderDate.getTime() >= yesterday.getTime() && orderDate.getTime() < today;
                     });
                 } else if (orderFilter.dateRange === 'last7days') {
                     const sevenDaysAgo = new Date(now);
                     sevenDaysAgo.setDate(now.getDate() - 6);
-                    tempOrders = tempOrders.filter(o => new Date(o.orderDate) >= sevenDaysAgo);
+                    tempOrders = tempOrders.filter(o => o.orderDate && new Date(o.orderDate.slice(0, 10)) >= sevenDaysAgo);
                 } else if (orderFilter.dateRange === 'last30days') {
                     const thirtyDaysAgo = new Date(now);
                     thirtyDaysAgo.setDate(now.getDate() - 29);
-                    tempOrders = tempOrders.filter(o => new Date(o.orderDate) >= thirtyDaysAgo);
+                    tempOrders = tempOrders.filter(o => o.orderDate && new Date(o.orderDate.slice(0, 10)) >= thirtyDaysAgo);
                 } else if (orderFilter.dateRange === 'custom' && orderFilter.startDate && orderFilter.endDate) {
                     const start = new Date(orderFilter.startDate);
                     const end = new Date(orderFilter.endDate);
                     end.setHours(23, 59, 59, 999);
                     tempOrders = tempOrders.filter(o => {
+                        if (!o.orderDate) return false;
                         const orderDate = new Date(o.orderDate);
                         return orderDate >= start && orderDate <= end;
                     });
                 }
             }
-
+            
             if (searchTerm) {
-                tempOrders = tempOrders.filter(o => 
-                    (o.orderNumber && o.orderNumber.toLowerCase().includes(searchTerm)) ||
-                    (o.productName && o.productName.toLowerCase().includes(searchTerm)) ||
-                    (o.sku && o.sku.toLowerCase().includes(searchTerm)) ||
-                    (o.shop && o.shop.toLowerCase().includes(searchTerm)) ||
-                    (o.platform && o.platform.toLowerCase().includes(searchTerm))
-                );
+                const orderNumbersMatchingSearch = new Set();
+                tempOrders.forEach(o => {
+                    if ( (o.orderNumber && o.orderNumber.toLowerCase().includes(searchTerm)) ||
+                         (o.productName && o.productName.toLowerCase().includes(searchTerm)) ||
+                         (o.sku && o.sku.toLowerCase().includes(searchTerm)) ||
+                         (o.shop && o.shop.toLowerCase().includes(searchTerm)) ||
+                         (o.platform && o.platform.toLowerCase().includes(searchTerm)) ||
+                         (o.trackingNumber && o.trackingNumber.toLowerCase().includes(searchTerm)) ||
+                         (o.remarks && o.remarks.toLowerCase().includes(searchTerm)) ||
+                         (o.recipientInfo && o.recipientInfo.toLowerCase().includes(searchTerm)) ||
+                         (o.express && o.express.toLowerCase().includes(searchTerm))
+                        ) {
+                        orderNumbersMatchingSearch.add(o.orderNumber);
+                    }
+                });
+                tempOrders = tempOrders.filter(o => orderNumbersMatchingSearch.has(o.orderNumber));
             }
 
-            filteredOrders = tempOrders.reverse().map(order => ({...order, originalIndex: orders.indexOf(order)}));
+            const orderGroups = new Map();
+            tempOrders.forEach(order => {
+                if (!orderGroups.has(order.orderNumber)) {
+                    orderGroups.set(order.orderNumber, {
+                        ...order,
+                        items: [],
+                        totalSalePrice: 0,
+                        totalProductCost: 0,
+                        totalCost: 0,
+                        totalProfit: 0,
+                        profitMargin: 0,
+                        imageUrl: order.imageUrl || (orderGroups.get(order.orderNumber)?.items[0]?.imageUrl || '')
+                    });
+                }
+                const group = orderGroups.get(order.orderNumber);
+                group.items.push(order);
+                group.totalSalePrice += order.salePrice || 0;
+                group.totalProductCost += order.productCost || 0;
+            });
+            
+            let groupedList = Array.from(orderGroups.values());
+            groupedList.forEach(group => {
+                group.totalCost = group.totalProductCost + group.shippingFee + group.packingFee + group.otherFee;
+                group.totalProfit = group.totalSalePrice - group.totalCost;
+                group.profitMargin = group.totalSalePrice > 0 ? (group.totalProfit / group.totalSalePrice) * 100 : 0;
+                if (!group.imageUrl && group.items.length > 0) {
+                     group.imageUrl = group.items.find(i => i.imageUrl)?.imageUrl || '';
+                }
+            });
+            
+            groupedList.sort((a, b) => {
+                let valA = a[orderSort.column];
+                let valB = b[orderSort.column];
+
+                if (orderSort.column === 'orderDate') {
+                    valA = new Date(a.orderDate || 0);
+                    valB = new Date(b.orderDate || 0);
+                }
+
+                if (valA < valB) {
+                    return orderSort.direction === 'asc' ? -1 : 1;
+                }
+                if (valA > valB) {
+                    return orderSort.direction === 'asc' ? 1 : -1;
+                }
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+
+            filteredOrders = groupedList;
             
             updateOrderSummary();
             renderOrderTable();
         }
 
+        function sortOrders(column) {
+            if (orderSort.column === column) {
+                orderSort.direction = orderSort.direction === 'desc' ? 'asc' : 'desc';
+            } else {
+                orderSort.column = column;
+                orderSort.direction = 'desc';
+            }
+            updateSortIndicators();
+            groupAndFilterOrders();
+        }
+
+        function updateSortIndicators() {
+            document.getElementById('orderDateSortIndicator').textContent = '';
+            const indicatorSpan = document.getElementById(`${orderSort.column}SortIndicator`);
+            if (indicatorSpan) {
+                indicatorSpan.textContent = ' ' + (orderSort.direction === 'desc' ? '▼' : '▲');
+            }
+        }
+
         function exportOrders() {
             if (filteredOrders.length === 0) {
-                alert('没有数据可以导出');
+                alert('没有符合筛选条件的数据可以导出');
                 return;
             }
             try {
-                const exportData = filteredOrders.map(o => ({
-                    '平台': o.platform, '店铺': o.shop, '订单号': o.orderNumber, '订单日期': o.orderDate, '商品名称': o.productName, 'SKU/规格': o.sku, '图片URL': o.imageUrl, '数量': o.quantity, '售价': o.salePrice, '商品总成本': o.productCost, '运费': o.shippingFee, '打包费': o.packingFee, '其他费用': o.otherFee, '订单总成本': o.totalCost, '利润': o.profit, '利润率%': o.profitMargin, '收件信息': o.recipientInfo, '快递': o.express, '快递单号': o.trackingNumber, '备注': o.remarks, '创建时间': new Date(o.createdAt).toLocaleString('zh-CN'), '更新时间': new Date(o.updatedAt).toLocaleString('zh-CN')
-                }));
+                const exportData = filteredOrders.map(group => {
+                    const productDetails = group.items
+                        .map(o => `${o.productName || 'N/A'}(${o.sku || 'N/A'})*${o.quantity || 1}件`)
+                        .join(' / ');
+                    return {
+                        '平台': group.platform, '店铺': group.shop, '订单号': group.orderNumber,
+                        '订单日期': group.orderDate ? new Date(group.orderDate) : null,
+                        '商品详情': productDetails,
+                        '售价': group.totalSalePrice, '商品总成本': group.totalProductCost, '运费': group.shippingFee,
+                        '打包费': group.packingFee, '其他费用': group.otherFee, '订单总成本': group.totalCost,
+                        '利润': group.totalProfit, '利润率%': group.profitMargin,
+                        '收件信息': group.recipientInfo, '快递': group.express, '快递单号': group.trackingNumber,
+                        '备注': group.remarks, '创建时间': group.createdAt ? new Date(group.createdAt) : null,
+                        '更新时间': group.updatedAt ? new Date(group.updatedAt) : null,
+                    };
+                });
                 const ws = XLSX.utils.json_to_sheet(exportData);
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, '订单信息');
-                XLSX.writeFile(wb, `订单信息_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')}.xlsx`);
-                alert('导出成功！');
-            } catch (e) { alert('导出失败，请重试'); }
+                XLSX.writeFile(wb, `订单信息(合并)_${new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')}.xlsx`);
+                showToast('合并订单导出成功！');
+            } catch (e) {
+                console.error('导出订单失败:', e);
+                alert('导出失败，请重试');
+            }
         }
+        
+        function handleImportOrderFile() {
+            const fileInput = document.getElementById('importOrderFile');
+            const fileNameDiv = document.getElementById('importOrderFileName');
+            const importBtn = document.getElementById('importOrderBtn');
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                fileNameDiv.textContent = `已选择文件: ${file.name}`;
+                importBtn.disabled = false;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, {type: 'array', cellDates: true});
+                        importOrderFileData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+                    } catch (e) {
+                        alert('读取文件失败，请确保是有效的Excel文件');
+                        importBtn.disabled = true;
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            } else {
+                fileNameDiv.textContent = '';
+                importBtn.disabled = true;
+                importOrderFileData = null;
+            }
+        }
+        
+        function processImportOrder() {
+            if (!importOrderFileData || importOrderFileData.length === 0) {
+                alert('请选择有效的Excel文件');
+                return;
+            }
+            try {
+                let importedCount = 0;
+                let errorCount = 0;
+
+                importOrderFileData.forEach(row => {
+                    try {
+                        // Intelligent parser: Check for consolidated '商品详情' column first
+                        if (row['商品详情'] && typeof row['商品详情'] === 'string') {
+                            const productStrings = row['商品详情'].split(' / ');
+                            const sharedOrderData = {
+                                platform: row['平台'] || '', shop: row['店铺'] || '', orderNumber: String(row['订单号'] || ''),
+                                recipientInfo: row['收件信息'] || '', express: row['快递'] || '', trackingNumber: String(row['快递单号'] || ''),
+                                remarks: row['备注'] || '', shippingFee: parseFloat(row['运费']) || 0,
+                                packingFee: parseFloat(row['打包费']) || 0, otherFee: parseFloat(row['其他费用']) || 0,
+                                totalSalePrice: parseFloat(row['售价']) || 0,
+                            };
+                            
+                            const orderDate = row['订单日期'];
+                            sharedOrderData.orderDate = (orderDate instanceof Date && !isNaN(orderDate)) ? orderDate.toISOString() : '';
+
+                            if (!sharedOrderData.platform || !sharedOrderData.orderNumber || !sharedOrderData.orderDate) {
+                                errorCount++; return;
+                            }
+
+                            let itemsCreated = 0;
+                            productStrings.forEach((pString, index) => {
+                                const regex = /(.+?)\((.*?)\)\*(\d+)件/;
+                                const match = pString.trim().match(regex);
+
+                                if (match && match.length === 4) {
+                                    const productName = match[1].trim();
+                                    const sku = match[2].trim();
+                                    const quantity = parseInt(match[3], 10);
+                                    const product = products.find(p => p.productName === productName && p.sku === sku);
+                                    const singleProductBaseCost = product ? (product.totalCost || 0) : 0;
+                                    const productCost = singleProductBaseCost * quantity;
+
+                                    const isFirstItem = index === 0;
+                                    const itemSalePrice = isFirstItem ? sharedOrderData.totalSalePrice : 0;
+                                    const itemShippingFee = isFirstItem ? sharedOrderData.shippingFee : 0;
+                                    const itemPackingFee = isFirstItem ? sharedOrderData.packingFee : 0;
+                                    const itemOtherFee = isFirstItem ? sharedOrderData.otherFee : 0;
+
+                                    const itemTotalCost = productCost + itemShippingFee + itemPackingFee + itemOtherFee;
+                                    const itemProfit = itemSalePrice - itemTotalCost;
+                                    const itemProfitMargin = itemSalePrice > 0 ? (itemProfit / itemSalePrice) * 100 : 0;
+                                    
+                                    orders.push({
+                                        ...sharedOrderData,
+                                        productName, sku, quantity, productCost,
+                                        imageUrl: product ? product.imageUrl : '',
+                                        salePrice: itemSalePrice, shippingFee: itemShippingFee,
+                                        packingFee: itemPackingFee, otherFee: itemOtherFee,
+                                        totalCost: itemTotalCost, profit: itemProfit, profitMargin: itemProfitMargin,
+                                        createdAt: new Date().toISOString(), updatedAt: new Date().toISOString()
+                                    });
+                                    itemsCreated++;
+                                }
+                            });
+                            if (itemsCreated > 0) importedCount++; else errorCount++;
+
+                        } else { // Fallback to single-item-per-row format
+                            const orderDate = row['订单日期']; const createdAt = row['创建时间']; const updatedAt = row['更新时间'];
+                            const order = {
+                                platform: row['平台'] || '', shop: row['店铺'] || '', orderNumber: String(row['订单号'] || ''),
+                                productName: row['商品名称'] || '', sku: row['SKU/规格'] || '', imageUrl: row['图片URL'] || '',
+                                quantity: parseInt(row['数量']) || 1, salePrice: parseFloat(row['售价']) || 0,
+                                productCost: parseFloat(row['商品总成本']) || 0, shippingFee: parseFloat(row['运费']) || 0,
+                                packingFee: parseFloat(row['打包费']) || 0, otherFee: parseFloat(row['其他费用']) || 0,
+                                totalCost: parseFloat(row['订单总成本']) || 0, profit: parseFloat(row['利润']) || 0,
+                                profitMargin: parseFloat(row['利润率%']) || 0, recipientInfo: row['收件信息'] || '',
+                                express: row['快递'] || '', trackingNumber: String(row['快递单号'] || ''),
+                                remarks: row['备注'] || '',
+                                orderDate: (orderDate instanceof Date && !isNaN(orderDate)) ? orderDate.toISOString() : '',
+                                createdAt: (createdAt instanceof Date && !isNaN(createdAt)) ? createdAt.toISOString() : new Date().toISOString(),
+                                updatedAt: (updatedAt instanceof Date && !isNaN(updatedAt)) ? updatedAt.toISOString() : new Date().toISOString()
+                            };
+
+                            if (order.platform && order.shop && order.orderNumber && order.orderDate && order.productName && order.sku) {
+                                orders.push(order);
+                                importedCount++;
+                            } else {
+                                errorCount++;
+                            }
+                        }
+                    } catch (e) { errorCount++; console.error("Error processing row:", row, e); }
+                });
+
+                if (importedCount > 0) {
+                    saveOrdersToLocalStorage();
+                    groupAndFilterOrders();
+                    showToast(`导入完成！成功 ${importedCount} 条订单${errorCount > 0 ? `，失败 ${errorCount} 条` : ''}`);
+                    closeModal('batchOrderImportModal');
+                } else {
+                    alert('没有有效的数据可以导入。请检查文件格式，并确保必填字段（如订单号、日期、商品详情/商品名称等）不为空。');
+                }
+            } catch (e) {
+                alert('导入失败，文件可能已损坏或格式不正确。');
+            }
+        }
+
 
         function updateOrderSummary() {
             const summaryDetails = document.getElementById('orderSummaryDetails');
@@ -3263,18 +3640,18 @@
                 return;
             }
 
-            const totals = summaryOrders.reduce((acc, order) => {
-                acc.totalSalePrice += order.salePrice || 0;
-                acc.totalProductCost += order.productCost || 0;
-                acc.totalShippingFee += order.shippingFee || 0;
-                acc.totalPackingFee += order.packingFee || 0;
-                acc.totalOtherFee += order.otherFee || 0;
-                acc.totalCost += order.totalCost || 0;
-                acc.totalProfit += order.profit || 0;
+            const totals = summaryOrders.reduce((acc, group) => {
+                acc.totalSalePrice += group.totalSalePrice || 0;
+                acc.totalProductCost += group.totalProductCost || 0;
+                acc.totalShippingFee += group.shippingFee || 0;
+                acc.totalPackingFee += group.packingFee || 0;
+                acc.totalOtherFee += group.otherFee || 0;
+                acc.totalCost += group.totalCost || 0;
+                acc.totalProfit += group.totalProfit || 0;
                 return acc;
             }, { totalSalePrice: 0, totalProductCost: 0, totalShippingFee: 0, totalPackingFee: 0, totalOtherFee: 0, totalCost: 0, totalProfit: 0 });
             
-            const profitMargin = totals.totalSalePrice ? (totals.totalProfit / totals.totalSalePrice * 100) : 0;
+            const profitMargin = totals.totalSalePrice > 0 ? (totals.totalProfit / totals.totalSalePrice * 100) : 0;
             
             summaryDetails.innerHTML = `
                 <div class="summary-item"><span class="summary-label">售价:</span><span class="summary-value">¥${totals.totalSalePrice.toFixed(2)}</span></div>
@@ -3287,7 +3664,6 @@
                 <div class="summary-item"><span class="summary-label">利润率:</span><span class="summary-value">${profitMargin.toFixed(2)}%</span></div>
             `;
         }
-
 
         function toggleOrderSummary() {
             const summaryDetails = document.getElementById('orderSummaryDetails');
@@ -3306,9 +3682,9 @@
                 if (confirm('再次确认：确定要删除所有订单数据吗？此操作不可恢复！')) {
                     orders = [];
                     saveOrdersToLocalStorage();
-                    filterAndSearchOrders();
+                    groupAndFilterOrders();
                     closeModal('clearOrderDataModal');
-                    alert('所有订单数据已清理完成！');
+                    showToast('所有订单数据已清理！');
                 }
             } else {
                 alert('密码错误！');
@@ -3323,66 +3699,108 @@
             document.getElementById('batchOrderImportModal').style.display = 'block';
         }
 
-        function handleImportOrderFile() {
-            const fileInput = document.getElementById('importOrderFile');
-            const fileNameDiv = document.getElementById('importOrderFileName');
-            const importBtn = document.getElementById('importOrderBtn');
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                fileNameDiv.textContent = `已选择文件: ${file.name}`;
-                importBtn.disabled = false;
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, {type: 'array'});
-                        importOrderFileData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-                    } catch (e) {
-                        alert('读取文件失败，请确保是有效的Excel文件');
-                        importBtn.disabled = true;
-                    }
-                };
-                reader.readAsArrayBuffer(file);
-            } else {
-                fileNameDiv.textContent = '';
-                importBtn.disabled = true;
-                importOrderFileData = null;
-            }
-        }
+        function saveOrUpdateOrderFromCalculator(andExport = false) {
+            const platform = document.getElementById('exportPlatform').value.trim();
+            const shop = document.getElementById('exportShop').value.trim();
+            const dateInput = document.getElementById('exportDate').value;
+            const orderNumber = document.getElementById('exportOrderNumber').value.trim();
+            const recipientInfo = document.getElementById('exportRecipientInfo').value.trim();
+            const express = document.getElementById('exportExpress').value.trim();
+            const trackingNumber = document.getElementById('exportTrackingNumber').value.trim();
+            const remarks = document.getElementById('exportRemarks').value.trim();
+            const editOrderNumber = document.getElementById('calculatorEditOrderNumber').value;
 
-        function processImportOrder() {
-            if (!importOrderFileData || importOrderFileData.length === 0) {
-                alert('请选择有效的Excel文件');
+            if (!platform || !shop || !dateInput || !orderNumber) {
+                alert('请填写平台、店铺、日期和订单号！');
                 return;
             }
-            try {
-                let importedCount = 0;
-                let errorCount = 0;
-                importOrderFileData.forEach(row => {
-                    try {
-                        const order = {
-                            platform: row['平台'] || '', shop: row['店铺'] || '', orderNumber: String(row['订单号'] || ''), orderDate: row['订单日期'] || '', productName: row['商品名称'] || '', sku: row['SKU/规格'] || '', imageUrl: row['图片URL'] || '', quantity: parseInt(row['数量']) || 1, salePrice: parseFloat(row['售价']) || 0, productCost: parseFloat(row['商品总成本']) || 0, shippingFee: parseFloat(row['运费']) || 0, packingFee: parseFloat(row['打包费']) || 0, otherFee: parseFloat(row['其他费用']) || 0, totalCost: parseFloat(row['订单总成本']) || 0, profit: parseFloat(row['利润']) || 0, profitMargin: parseFloat(row['利润率%']) || 0, recipientInfo: row['收件信息'] || '', express: row['快递'] || '', trackingNumber: String(row['快递单号'] || ''), remarks: row['备注'] || '', createdAt: row['创建时间'] ? new Date(row['创建时间']).toISOString() : new Date().toISOString(), updatedAt: row['更新时间'] ? new Date(row['更新时间']).toISOString() : new Date().toISOString()
-                        };
-                        if (order.platform && order.shop && order.orderNumber && order.orderDate && order.productName && order.sku) {
-                            orders.push(order);
-                            importedCount++;
-                        } else {
-                            errorCount++;
-                        }
-                    } catch (e) { errorCount++; }
-                });
-                if (importedCount > 0) {
-                    saveOrdersToLocalStorage();
-                    filterAndSearchOrders();
-                    alert(`导入完成！成功导入 ${importedCount} 条记录${errorCount > 0 ? `，${errorCount} 条记录有错误` : ''}`);
-                    closeModal('batchOrderImportModal');
-                } else {
-                    alert('没有有效的数据可以导入');
-                }
-            } catch (e) {
-                alert('导入失败，请检查文件格式是否正确');
+            
+            if(editOrderNumber){
+                orders = orders.filter(o => o.orderNumber !== editOrderNumber);
             }
+            
+            const totalSalePrice = parseFloat(document.getElementById('salePrice').value) || 0;
+            const shippingFee = parseFloat(document.getElementById('orderShipping').value) || 0;
+            const packingFee = parseFloat(document.getElementById('packingFee').value) || 0;
+            const otherFee = parseFloat(document.getElementById('otherFee').value) || 0;
+            const now = new Date().toISOString();
+            
+            if (cartItems.length === 0) {
+                 const productCost = 0;
+                 const itemSalePrice = totalSalePrice;
+                 const itemTotalCost = productCost + shippingFee + packingFee + otherFee;
+                 const itemProfit = itemSalePrice - itemTotalCost;
+                 const itemProfitMargin = itemSalePrice > 0 ? (itemProfit / itemSalePrice) * 100 : 0;
+                 
+                 orders.push({
+                    platform, shop, orderNumber, recipientInfo, express, trackingNumber, remarks,
+                    orderDate: dateInput,
+                    productName: 'N/A', sku: 'N/A', imageUrl: '', quantity: 0,
+                    productCost, salePrice: itemSalePrice, shippingFee, packingFee, otherFee,
+                    totalCost: itemTotalCost, profit: itemProfit, profitMargin: itemProfitMargin,
+                    createdAt: now, updatedAt: now,
+                 });
+            } else {
+                cartItems.forEach((cartItem, index) => {
+                    const product = products[cartItem.index];
+                    const quantity = cartItem.quantity;
+                    const productCost = (product.totalCost || 0) * quantity;
+                    
+                    const isFirstItem = index === 0;
+                    const itemSalePrice = isFirstItem ? totalSalePrice : 0;
+                    const itemShippingFee = isFirstItem ? shippingFee : 0;
+                    const itemPackingFee = isFirstItem ? packingFee : 0;
+                    const itemOtherFee = isFirstItem ? otherFee : 0;
+                    
+                    const itemTotalCost = productCost + itemShippingFee + itemPackingFee + itemOtherFee;
+                    const itemProfit = itemSalePrice - itemTotalCost;
+                    const itemProfitMargin = itemSalePrice > 0 ? (itemProfit / itemSalePrice) * 100 : 0;
+                    
+                    orders.push({
+                        platform, shop, orderNumber, recipientInfo, express, trackingNumber, remarks,
+                        orderDate: dateInput,
+                        productName: product.productName, sku: product.sku, imageUrl: product.imageUrl,
+                        quantity, productCost,
+                        salePrice: itemSalePrice, shippingFee: itemShippingFee, packingFee: itemPackingFee, otherFee: itemOtherFee,
+                        totalCost: itemTotalCost, profit: itemProfit, profitMargin: itemProfitMargin,
+                        createdAt: now, updatedAt: now,
+                    });
+                });
+            }
+
+            saveOrdersToLocalStorage();
+            localStorage.setItem('lastPlatform', platform);
+            localStorage.setItem('lastShop', shop);
+            localStorage.setItem('lastExpress', express);
+
+            if (andExport) {
+                triggerExport('xlsx');
+            } else {
+                showToast(`订单 "${orderNumber}" 已保存！`);
+            }
+
+            groupAndFilterOrders();
+            closeModal('exportOrderModal');
+            closeProfitCalculator();
         }
+        
+        function processRefund(type) {
+            if (!confirm('确定要执行退款操作吗？这将修改订单的售价和/或成本。')) {
+                return;
+            }
+
+            if (type === 1) {
+                document.getElementById('salePrice').value = 0;
+            } else if (type === 2) {
+                document.getElementById('salePrice').value = 0;
+                cartItems = [];
+                updateCartDisplay();
+            }
+            
+            calculateProfit();
+            showToast('退款操作已应用，请检查利润明细并保存订单。');
+        }
+
     </script>
 </body>
 </html>

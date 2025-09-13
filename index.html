@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>商品订单综合管理系统 v10.6.250912.05</title>
+    <title>商品订单综合管理系统 v10.8.250913.01</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
@@ -1348,7 +1348,7 @@
 <body>
     <div class="container" style="display: none;">
         <div class="header">
-            <h1>商品订单综合管理系统 v10.6.250912.05</h1>
+            <h1>商品订单综合管理系统 v10.8.250913.01</h1>
             <button class="btn-primary" onclick="openAddModal()">录入商品</button>
             <button class="btn-secondary" onclick="openBatchImportExport()">批量操作</button>
             <button class="btn-secondary" onclick="openProfitCalculator()">订单结算(多商品)</button>
@@ -1392,7 +1392,7 @@
             <button class="clear-data-btn-footer" onclick="openClearDataModal()">清理所有数据</button>
         </div>
 		<div style="text-align: center; font-size: 12px; color: #999; margin-top: 10px; padding-bottom: 20px;">
-		    kevin鲁大师 版权所有 盗用必究 版本号：v10.6.250912.05
+		    kevin鲁大师 版权所有 盗用必究 版本号：v10.8.250913.01
 		</div>
     </div>
 
@@ -1898,7 +1898,7 @@
     <script>
         /*
             开发人员说明 (Developer Note):
-            - v10.6: 实现了智能订单导入解析器，现在系统导出的合并订单文件可以直接被再次导入。同时修复了移动端日期解析的兼容性问题，并添加了列隐藏/显示功能。
+            - v10.8: 实现了智能订单导入解析器，现在系统导出的合并订单文件可以直接被再次导入。同时修复了移动端日期解析的兼容性问题，并添加了列隐藏/显示功能。
         */
         // 全局变量
         let products = [];
@@ -3474,15 +3474,27 @@
                     const productDetails = group.items
                         .map(o => `${o.productName || 'N/A'}(${o.sku || 'N/A'})*${o.quantity || 1}件`)
                         .join(' / ');
+                    const imageUrls = group.items.map(o => o.imageUrl || '').filter(Boolean).join(' | ');
                     return {
-                        '平台': group.platform, '店铺': group.shop, '订单号': group.orderNumber,
+                        '平台': group.platform,
+                        '店铺': group.shop,
+                        '订单号': group.orderNumber,
                         '订单日期': group.orderDate ? new Date(group.orderDate) : null,
                         '商品详情': productDetails,
-                        '售价': group.totalSalePrice, '商品总成本': group.totalProductCost, '运费': group.shippingFee,
-                        '打包费': group.packingFee, '其他费用': group.otherFee, '订单总成本': group.totalCost,
-                        '利润': group.totalProfit, '利润率%': group.profitMargin,
-                        '收件信息': group.recipientInfo, '快递': group.express, '快递单号': group.trackingNumber,
-                        '备注': group.remarks, '创建时间': group.createdAt ? new Date(group.createdAt) : null,
+                        '图片URL': imageUrls,
+                        '售价': group.totalSalePrice,
+                        '商品总成本': group.totalProductCost,
+                        '运费': group.shippingFee,
+                        '打包费': group.packingFee,
+                        '其他费用': group.otherFee,
+                        '订单总成本': group.totalCost,
+                        '利润': group.totalProfit,
+                        '利润率%': group.profitMargin,
+                        '收件信息': group.recipientInfo,
+                        '快递': group.express,
+                        '快递单号': group.trackingNumber,
+                        '备注': group.remarks,
+                        '创建时间': group.createdAt ? new Date(group.createdAt) : null,
                         '更新时间': group.updatedAt ? new Date(group.updatedAt) : null,
                     };
                 });
